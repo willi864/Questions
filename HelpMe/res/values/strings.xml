@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Questions?</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_display_look">Look Up a Question</string>
+    <string name="edit_message">Enter the Question</string>
+    <string name="button_search">Search</string>
+    <string name="look">Look Up Questions</string>
+    <string name="answer">Answer Questions</string>
+    <string name="post">Post A Question</string>
+    <string name="slogan">Got a question? We have the answers.</string>
+    <string name="title_activity_display_show">Showing Question</string>
+    <string name="title_activity_display_answer">Answering Question</string>
+
+</resources>
