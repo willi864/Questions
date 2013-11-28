@@ -3,9 +3,12 @@ package com.example.helpme;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.Dialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
@@ -16,7 +19,10 @@ import android.os.Build;
 public class DisplayAnswerActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
 	private QuestionDataSource datasource;
-	String message;
+	private AnswerDataSource ansdatasource;
+	
+	private String message;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,14 +30,14 @@ public class DisplayAnswerActivity extends Activity {
 		
 		datasource = new QuestionDataSource(this);
 		datasource.open();
+		ansdatasource = new AnswerDataSource(this);
+		ansdatasource.open();
 		
-		Intent intent = getIntent();
-		message = intent.getStringExtra(DisplaySelectQuestion.EXTRA_MESSAGE);
-		if(message==null)
-			message=datasource.getTheQuestions(0);
+		message=datasource.getFirstQuestions();
 		
 		TextView tv = (TextView) findViewById(R.id.text_question);
 		tv.setText(message);
+		tv.setTextSize(20);
 	}
 
 	/**
@@ -72,15 +78,65 @@ public class DisplayAnswerActivity extends Activity {
 	public void addAnswer(View view){
 		EditText editText = (EditText) findViewById(R.id.edit_answer);
 		String answer = editText.getText().toString();
-		if(answer.equals(""))
+		if(answer.equals("")){
+			final Dialog dialog = new Dialog(this);
+			dialog.setContentView(R.layout.dialog);
+			dialog.setTitle("Input Error");
+			
+			Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+			dialogButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
 			return;
-//		datasource.addAnswer(message,answer);
-
+		}
+		long quesId=datasource.getQuestionId(message);
+		ansdatasource.createAnswer(answer, quesId);
+		
 		Intent intent =  new Intent(this, DisplaySelectQuestion.class);
 		intent.putExtra(EXTRA_MESSAGE, message);		
 		
 		startActivity(intent);
-		
-		
 	}
+	
+	public void toNextQuestion(View view){
+		long quesId=datasource.getQuestionId(message);
+		quesId++;
+		message = datasource.getQuestion(quesId);
+		if(message==null)
+			message=datasource.getFirstQuestions();
+		
+		TextView tv = (TextView) findViewById(R.id.text_question);
+		tv.setText(message);
+		tv.setTextSize(20);
+	}
+	
+	public void toPrevQuestion(View view){
+		long quesId=datasource.getQuestionId(message);
+		quesId--;
+		message = datasource.getQuestion(quesId);
+		if(message==null)
+			message=datasource.getLastQuestions();
+		
+		TextView tv = (TextView) findViewById(R.id.text_question);
+		tv.setText(message);
+		tv.setTextSize(20);
+	}
+	
+	 @Override
+	  protected void onResume() {
+		ansdatasource.open();
+	    datasource.open();
+	    super.onResume();
+	  }
+
+	  @Override
+	  protected void onPause() {
+		ansdatasource.close();
+	    datasource.close();
+	    super.onPause();
+	  }
 }

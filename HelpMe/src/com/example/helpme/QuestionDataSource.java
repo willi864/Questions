@@ -106,12 +106,31 @@ public class QuestionDataSource{
 		return questions;
 	}
 	
-	public String getTheQuestions(int position){
+	public String getFirstQuestions(){
 		Cursor cursor = database.query(SqlHelper.TABLE_QUESTIONS,allColumns, null, null, null, null, null);
-		cursor.moveToPosition(position);
+		cursor.moveToFirst();
+		return cursor.getString(1);
+	}
+	
+	public String getLastQuestions(){
+		Cursor cursor = database.query(SqlHelper.TABLE_QUESTIONS,allColumns, null, null, null, null, null);
+		cursor.moveToLast();		
+		return cursor.getString(1);
+	}
+	
+	public String getQuestion(long id){
+		Cursor cursor = database.query(SqlHelper.TABLE_QUESTIONS,allColumns, SqlHelper.COLUMN_ID+"="+id, null, null, null, null);
+		if(cursor.getCount()==0)
+			return null;
+		cursor.moveToFirst();
 		Questions question = cursorToQuestion(cursor);
-		
 		return question.getQuestion();
+	}
+	
+	public long getQuestionId(String question){
+		Cursor cursor = database.query(SqlHelper.TABLE_QUESTIONS,allColumns,SqlHelper.COLUMN1_QUESTION+" like \""+question+"\"" , null, null, null, null);
+		cursor.moveToFirst();
+		return cursor.getLong(0);
 	}
 	
 	public int getNumberOfQuestions(){

@@ -25,10 +25,10 @@
         <activity
             android:name="com.example.helpme.DisplayLookActivity"
             android:label="@string/title_activity_display_look" >
-        </activity>
-        <activity
-            android:name="com.example.helpme.DisplayShowActivity"
-            android:label="@string/title_activity_display_show" >
+            android:parentActivityName="com.example.helpme.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.helpme.MainActivity" />
         </activity>
         <activity
             android:name="com.example.helpme.DisplayPostActivity"
@@ -37,10 +37,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.helpme.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.example.helpme.DisplayQuestionActivity"
-            android:label="@string/title_activity_display_question" >
         </activity>
         <activity
             android:name="com.example.helpme.DisplaySelectQuestion"

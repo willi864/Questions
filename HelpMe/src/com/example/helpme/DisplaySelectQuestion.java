@@ -1,37 +1,56 @@
 package com.example.helpme;
 
 
+import java.util.List;
+
 import android.os.Bundle;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 
 public class DisplaySelectQuestion extends ListActivity {
-	static final String EXTRA_MESSAGE = "com.example.helpme.select.MESSAGE";
+
+	private QuestionDataSource datasource;
+	private AnswerDataSource ansdatasource;
+	
 	private String message;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_select_question);
-		// Show the Up button in the action bar.
+
+		datasource = new QuestionDataSource(this);
+		datasource.open();
+		ansdatasource = new AnswerDataSource(this);
+		ansdatasource.open();
+		
 		Intent intent = getIntent();
-		message = intent.getStringExtra("com.example.helpme.Question");
+		message = intent.getStringExtra(DisplayLookActivity.EXTRA_MESSAGE);
 		
 		TextView tv = (TextView) findViewById(R.id.question);
 		tv.setText(message);
 		
-//		List<String> values = datasource.getAnswers(message);
-//		if(values!=null){
-//			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
-//			setListAdapter(adapter);
-//		}
 		
+		message = message.substring(message.indexOf(" ")+1);
+		long quesid = datasource.getQuestionId(message);
+		List<Answers> values = ansdatasource.getAllAnswers(quesid);
+		if(values!=null){
+			ArrayAdapter<Answers> adapter = new ArrayAdapter<Answers>(this,android.R.layout.simple_dropdown_item_1line,values);
+			setListAdapter(adapter);
+		}		
 	}
 
 	/**
@@ -68,11 +87,56 @@ public class DisplaySelectQuestion extends ListActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	@SuppressLint("NewApi")
 	public void answerQuestion(View view){
-		Intent intent = new Intent(this, DisplayAnswerActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
 		
+        EditText editText = (EditText) findViewById(R.id.edit_textanswer);
+		String answer = editText.getText().toString();
+		if(answer.equals("")||answer.equals(" ")||answer.equals("\n")||answer.equals("\t")){
+			final Dialog dialog = new Dialog(this);
+			dialog.setContentView(R.layout.dialog);
+			dialog.setTitle("Input Error");
+			
+			Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+			dialogButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
+			
+			return;
+		}
+		long quesId=datasource.getQuestionId(message);
+		ansdatasource.createAnswer(answer, quesId);
+		
+		List<Answers> answers= ansdatasource.getAllAnswers(quesId);
+		
+		@SuppressWarnings("unchecked")
+		ArrayAdapter<Answers> adapter = (ArrayAdapter<Answers>) getListAdapter();
+		if(adapter==null){
+			adapter = new ArrayAdapter<Answers>(this,android.R.layout.simple_dropdown_item_1line,answers);
+			setListAdapter(adapter);
+		}else{
+			adapter.clear();
+			adapter.addAll(answers);
+		    adapter.notifyDataSetChanged();
+		}
 	}
 
+	
+	 @Override
+	  protected void onResume() {
+		ansdatasource.open();
+	    datasource.open();
+	    super.onResume();
+	  }
+
+	  @Override
+	  protected void onPause() {
+	    datasource.close();
+	    ansdatasource.close();
+	    super.onPause();
+	  }
 }

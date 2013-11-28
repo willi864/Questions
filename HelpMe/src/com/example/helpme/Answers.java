@@ -33,6 +33,6 @@ public class Answers{
 	  // Will be used by the ArrayAdapter in the ListView
 	  @Override
 	  public String toString() {
-	    return ""+id+". "+questionId+": "+answer;
+	    return answer;
 	  }
 }

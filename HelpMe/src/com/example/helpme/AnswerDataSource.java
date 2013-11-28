@@ -28,16 +28,25 @@ public class AnswerDataSource{
 		dbHelper.close();
 	}
 	
-	public Answers createQuestion(String answers, int quesid){
+	public Answers createAnswer(String answers, long quesid){
 		if(answers.equals(""))
 			return null;
 		ContentValues values = new ContentValues();
 		values.put(AnswerSqlHelper.COLUMN1_ANSWER, answers);
-		values.put(AnswerSqlHelper.COLUMN2_ANSWER, ""+quesid);
-
+		values.put(AnswerSqlHelper.COLUMN2_ANSWER, quesid);
+				
+		Cursor cursor = database.query(AnswerSqlHelper.TABLE_ANSWERS, allColumns, AnswerSqlHelper.COLUMN2_ANSWER+"="+quesid, null, null, null, null);
+		int count = cursor.getCount();
+		if(count==10){
+			cursor.moveToFirst();
+			long id = cursor.getLong(0);
+			database.delete(AnswerSqlHelper.TABLE_ANSWERS, AnswerSqlHelper.COLUMN_ID+"="+id, null);
+		}
+		
 		long insertId = database.insert(AnswerSqlHelper.TABLE_ANSWERS, null, values);
-		Cursor cursor = database.query(AnswerSqlHelper.TABLE_ANSWERS, allColumns, SqlHelper.COLUMN_ID+"="+insertId, null, null, null, null);
+		cursor = database.query(AnswerSqlHelper.TABLE_ANSWERS, allColumns, AnswerSqlHelper.COLUMN_ID+"="+insertId, null, null, null, null);
 		cursor.moveToFirst();
+
 		Answers newAnswers = cursorToAnswer(cursor);
 		cursor.close();
 		return newAnswers;
@@ -52,9 +61,12 @@ public class AnswerDataSource{
 		dbHelper.onUpgrade(database, 1, 2);
 	}
 	
-	public List<Answers> getAllAnswers(){
+	public List<Answers> getAllAnswers(long quesid){
 		List<Answers> answers = new ArrayList<Answers>();
-		Cursor cursor = database.query(AnswerSqlHelper.TABLE_ANSWERS, allColumns, null, null, null, null, null);
+		Cursor cursor = database.query(AnswerSqlHelper.TABLE_ANSWERS, allColumns, AnswerSqlHelper.COLUMN2_ANSWER+"="+quesid, null, null, null, null);
+		if(cursor.getCount()==0)
+			return null;
+		
 		cursor.moveToFirst();
 		while(!cursor.isAfterLast()){
 			Answers answer = cursorToAnswer(cursor);

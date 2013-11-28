@@ -2,14 +2,17 @@ package com.example.helpme;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.Dialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.Build;
 
 public class DisplayPostActivity extends Activity {
@@ -24,6 +27,10 @@ public class DisplayPostActivity extends Activity {
 
 		datasource = new QuestionDataSource(this);
 		datasource.open();
+		
+		TextView tv = (TextView) findViewById(R.id.text_post);
+		tv.setText("Post question:");
+		tv.setTextSize(30);
 	}
 
 	/**
@@ -64,13 +71,25 @@ public class DisplayPostActivity extends Activity {
 		
 		EditText editText = (EditText) findViewById(R.id.edit_message);
 		String question = editText.getText().toString();
-		if(question.equals(""))
+		if(question.equals("")||question.equals(" ")||question.equals("\t")||question.equals("\n")){
+			final Dialog dialog = new Dialog(this);
+			dialog.setContentView(R.layout.dialog);
+			dialog.setTitle("Input Error");
+			
+			Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+			dialogButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
 			return;
-		Intent intent =  new Intent(this, DisplayQuestionActivity.class);
-		intent.putExtra(EXTRA_MESSAGE, question);		
+		}
+		TextView tv = (TextView) findViewById(R.id.text_post);
+		tv.setText("You posted the question:\n"+question);
+		tv.setTextSize(30);
 		datasource.createQuestion(question);
-
-		startActivity(intent);
 	}
 	
 	  @Override

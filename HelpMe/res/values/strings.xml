@@ -12,6 +12,8 @@
     <string name="post">Post A Question</string>
     <string name="button_post">Post</string>
     <string name="button_answer">Answer</string>
+    <string name="button_next">Next</string>
+    <string name="button_prev">Previous</string>
     <string name="slogan">Got a question? We have the answers.</string>
     <string name="title_activity_display_show">Showing Question</string>
     <string name="title_activity_display_answer">Answering Question</string>

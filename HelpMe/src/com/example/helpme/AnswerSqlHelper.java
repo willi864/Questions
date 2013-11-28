@@ -13,7 +13,7 @@ public class AnswerSqlHelper extends SQLiteOpenHelper{
 	public static final String COLUMN2_ANSWER = "quesid";
 
 	
-	private static final String DATABASE_NAME = "questions.db";
+	private static final String DATABASE_NAME = "answers.db";
 	private static final int DATABASE_VERSION = 1;
 	
 	 private static final String DATABASE_CREATE = "create table "

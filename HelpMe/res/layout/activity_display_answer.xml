@@ -10,8 +10,23 @@
 
     <TextView android:id="@+id/text_question"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+        
+     <Button android:id="@+id/button_next"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentRight="true"
+       	android:layout_below="@+id/text_question"
+        android:text="@string/button_next" 
+        android:onClick="toNextQuestion"/>
+        
+	<Button android:id="@+id/button_prev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+       	android:layout_below="@+id/text_question"
+        android:text="@string/button_prev" 
+        android:onClick="toPrevQuestion"/>
     
     <EditText android:id="@+id/edit_answer"
         android:layout_weight="1"
