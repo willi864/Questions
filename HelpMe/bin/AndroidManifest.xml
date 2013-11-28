@@ -31,8 +31,32 @@
             android:label="@string/title_activity_display_show" >
         </activity>
         <activity
+            android:name="com.example.helpme.DisplayPostActivity"
+            android:label="@string/title_activity_display_post"
+            android:parentActivityName="com.example.helpme.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.helpme.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.helpme.DisplayQuestionActivity"
+            android:label="@string/title_activity_display_question" >
+        </activity>
+        <activity
+            android:name="com.example.helpme.DisplaySelectQuestion"
+            android:label="@string/title_activity_display_select_question"
+            android:parentActivityName="com.example.helpme.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.helpme.MainActivity" />
+        </activity>
+        <activity
             android:name="com.example.helpme.DisplayAnswerActivity"
-            android:label="@string/title_activity_display_answer" >
+            android:label="@string/title_activity_display_answer"
+            android:parentActivityName="com.example.helpme.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.helpme.MainActivity" />
         </activity>
     </application>
 

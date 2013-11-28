@@ -10,8 +10,14 @@
     <string name="look">Look Up Questions</string>
     <string name="answer">Answer Questions</string>
     <string name="post">Post A Question</string>
+    <string name="button_post">Post</string>
+    <string name="button_answer">Answer</string>
     <string name="slogan">Got a question? We have the answers.</string>
     <string name="title_activity_display_show">Showing Question</string>
     <string name="title_activity_display_answer">Answering Question</string>
+    <string name="title_activity_display_post">Post Question</string>
+    <string name="title_activity_display_question">Here is your question</string>
+    <string name="title_activity_display_question_activiy">Here is your quesiton</string>
+    <string name="title_activity_display_select_question">Selected Question</string>
 
 </resources>

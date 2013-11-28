@@ -1,37 +1,29 @@
 package com.example.helpme;
 
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.support.v4.app.NavUtils;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 
-public class DisplayAnswerActivity extends Activity {
-	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
+public class DisplayPostActivity extends Activity {
+	public final static String EXTRA_MESSAGE = "com.example.helpme.post.Question";
 	private QuestionDataSource datasource;
-	String message;
+	
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_answer);
-		
+		setContentView(R.layout.activity_display_post);
+
 		datasource = new QuestionDataSource(this);
 		datasource.open();
-		
-		Intent intent = getIntent();
-		message = intent.getStringExtra(DisplaySelectQuestion.EXTRA_MESSAGE);
-		if(message==null)
-			message=datasource.getTheQuestions(0);
-		
-		TextView tv = (TextView) findViewById(R.id.text_question);
-		tv.setText(message);
 	}
 
 	/**
@@ -47,7 +39,7 @@ public class DisplayAnswerActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.display_answer, menu);
+		getMenuInflater().inflate(R.menu.display_post, menu);
 		return true;
 	}
 
@@ -67,20 +59,30 @@ public class DisplayAnswerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 	
-	public void addAnswer(View view){
-		EditText editText = (EditText) findViewById(R.id.edit_answer);
-		String answer = editText.getText().toString();
-		if(answer.equals(""))
+	public void postQuestion(View view){		
+		
+		EditText editText = (EditText) findViewById(R.id.edit_message);
+		String question = editText.getText().toString();
+		if(question.equals(""))
 			return;
-//		datasource.addAnswer(message,answer);
+		Intent intent =  new Intent(this, DisplayQuestionActivity.class);
+		intent.putExtra(EXTRA_MESSAGE, question);		
+		datasource.createQuestion(question);
 
-		Intent intent =  new Intent(this, DisplaySelectQuestion.class);
-		intent.putExtra(EXTRA_MESSAGE, message);		
-		
 		startActivity(intent);
-		
-		
 	}
+	
+	  @Override
+	  protected void onResume() {
+	    datasource.open();
+	    super.onResume();
+	  }
+
+	  @Override
+	  protected void onPause() {
+	    datasource.close();
+	    super.onPause();
+	  }
+
 }

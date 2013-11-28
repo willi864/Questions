@@ -30,10 +30,10 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 	
-	/*
+	
 	public void newQuestion(View view) {
-        Intent intent = new Intent(this, DisplayNewActivity.class);
+        Intent intent = new Intent(this, DisplayPostActivity.class);
         startActivity(intent);
-    }*/
+    }
 
 }

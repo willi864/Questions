@@ -2,36 +2,36 @@ package com.example.helpme;
 
 
 import android.os.Bundle;
-import android.app.Activity;
+import android.app.ListActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 
-public class DisplayAnswerActivity extends Activity {
-	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
-	private QuestionDataSource datasource;
-	String message;
+public class DisplaySelectQuestion extends ListActivity {
+	static final String EXTRA_MESSAGE = "com.example.helpme.select.MESSAGE";
+	private String message;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_answer);
-		
-		datasource = new QuestionDataSource(this);
-		datasource.open();
-		
+		setContentView(R.layout.activity_display_select_question);
+		// Show the Up button in the action bar.
 		Intent intent = getIntent();
-		message = intent.getStringExtra(DisplaySelectQuestion.EXTRA_MESSAGE);
-		if(message==null)
-			message=datasource.getTheQuestions(0);
+		message = intent.getStringExtra("com.example.helpme.Question");
 		
-		TextView tv = (TextView) findViewById(R.id.text_question);
+		TextView tv = (TextView) findViewById(R.id.question);
 		tv.setText(message);
+		
+//		List<String> values = datasource.getAnswers(message);
+//		if(values!=null){
+//			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
+//			setListAdapter(adapter);
+//		}
+		
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class DisplayAnswerActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.display_answer, menu);
+		getMenuInflater().inflate(R.menu.display_select_question, menu);
 		return true;
 	}
 
@@ -67,20 +67,12 @@ public class DisplayAnswerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 	
-	public void addAnswer(View view){
-		EditText editText = (EditText) findViewById(R.id.edit_answer);
-		String answer = editText.getText().toString();
-		if(answer.equals(""))
-			return;
-//		datasource.addAnswer(message,answer);
-
-		Intent intent =  new Intent(this, DisplaySelectQuestion.class);
-		intent.putExtra(EXTRA_MESSAGE, message);		
-		
-		startActivity(intent);
-		
+	public void answerQuestion(View view){
+		Intent intent = new Intent(this, DisplayAnswerActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
 		
 	}
+
 }

@@ -6,34 +6,29 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".DisplayLookActivity" >
+    tools:context=".DisplaySelectQuestion" >
 
+    <TextView android:id="@+id/question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" />
+    
     <ListView
         android:id="@android:id/list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/editText1"
-        android:text="Most Recent Question"/>
+        android:layout_below="@+id/answer"
+        android:text="Answers"/>
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/answer"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/button_search"
-        android:onClick="showSearchQuestion" />
+       	android:layout_below="@+id/question"
+        android:text="@string/button_answer"
+        android:onClick="answerQuestion" />
 
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_toLeftOf="@+id/button1"
-        android:ems="10"
-        android:hint="@string/edit_message" />
-        
 </RelativeLayout>
