@@ -22,19 +22,18 @@ import android.widget.ListView;
 public class DisplayLookActivity extends ListActivity {
 
 	static final String EXTRA_MESSAGE = "com.example.helpme.Question";
-	private QuestionDataSource datasource;
-
+	private DatabaseAPI databaseapi;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_look);
 		
-		datasource = new QuestionDataSource(this);
-		datasource.open();
+//		datasource = new QuestionDataSource(this);
+//		datasource.open();
 		
-		List<Questions> values = datasource.getTopTenQuestions();
+		List<String> values = databaseapi.getLastTen();
 		if(values!=null){
-			ArrayAdapter<Questions> adapter = new ArrayAdapter<Questions>(this,android.R.layout.simple_dropdown_item_1line,values);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
 			setListAdapter(adapter);
 		}
 	}
@@ -105,12 +104,11 @@ public class DisplayLookActivity extends ListActivity {
 			
 	    	return;
 	    }
-		List<Questions> values = datasource.getRelatedQuestions(questionKey);		
-
+		List<String> values = databaseapi.findQuestion(questionKey);	
 		@SuppressWarnings("unchecked")
-		ArrayAdapter<Questions> adapter = (ArrayAdapter<Questions>) getListAdapter();
+		ArrayAdapter<String> adapter = (ArrayAdapter<String>) getListAdapter();
 		if(adapter==null){
-			adapter = new ArrayAdapter<Questions>(this,android.R.layout.simple_dropdown_item_1line,values);
+			adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
 			setListAdapter(adapter);
 		}else if(values==null){
 			adapter.clear();
@@ -122,15 +120,5 @@ public class DisplayLookActivity extends ListActivity {
 		}
     }
 	
-	 @Override
-	  protected void onResume() {
-	    datasource.open();
-	    super.onResume();
-	  }
-
-	  @Override
-	  protected void onPause() {
-	    datasource.close();
-	    super.onPause();
-	  }
+	
 }

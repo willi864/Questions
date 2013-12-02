@@ -11,25 +11,12 @@ import android.view.Menu;
 import android.view.View;
 
 public class MainActivity extends Activity {
-	final static int port =7755;
-	private static int[] mostRecent = new int[10];
 	@Override
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-//	    try{  
-//	        ServerSocket s = new ServerSocket(port);
-//	        while (true){ 
-//	          Socket incoming = s.accept();
-//	          Runnable r = new ThreadedHandler(incoming);
-//	          Thread t = new Thread(r);
-//	          t.start();
-//	        }
-//	      }catch (IOException e){
-//	        e.printStackTrace();
-//	      }
 	}
 	
 	

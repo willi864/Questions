@@ -9,13 +9,12 @@ import java.util.List;
 
 public class DatabaseAPI{
 	
-	public static String[] getLastTen(){
+	public List<String> getLastTen(){
 		Socket requestsocket;
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
-		String[] strarray = null;
 		try{
 			requestsocket = new Socket("128.10.25.10",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
@@ -30,21 +29,16 @@ public class DatabaseAPI{
 		
 		if(answer!=null){
 			ans = Arrays.asList(answer.split("\\|"));
-			strarray = ans.toArray(new String[0]);
-			for(int i=0;i<strarray.length;i++){
-				System.out.println(strarray[i]);
-			}
 		}
-		return strarray;
+		return ans;
 	}
 	
-	public static String[] findQuestion(String key){
+	public List<String> findQuestion(String key){
 		Socket requestsocket;
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
-		String[] strarray = null;
 		try{
 			requestsocket = new Socket("128.10.25.10",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
@@ -59,21 +53,16 @@ public class DatabaseAPI{
 		
 		if(answer!=null){
 			ans = Arrays.asList(answer.split("\\|"));
-			strarray = ans.toArray(new String[0]);
-			for(int i=0;i<strarray.length;i++){
-				System.out.println(strarray[i]);
-			}
 		}
-		return strarray;
+		return ans;
 	}
 	
-	public static String[] randomQuestion(){
+	public String randomQuestion(){
 		Socket requestsocket;
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
-		String[] strarray = null;
 		try{
 			requestsocket = new Socket("128.10.25.10",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
@@ -88,23 +77,19 @@ public class DatabaseAPI{
 		
 		if(answer!=null){
 			ans = Arrays.asList(answer.split("\\|"));
-			strarray = ans.toArray(new String[0]);
-			for(int i=0;i<strarray.length;i++){
-				System.out.println(strarray[i]);
-			}
 		}
-		return strarray;
+		return ans.get(0);
 	}
 	
 	
-	public static void addAnswer(String a){
+	public void addAnswer(String q, String a){
 		Socket requestsocket;
 		PrintWriter out;
 		try{
 			requestsocket = new Socket("128.10.25.10",7755);
 			out = new PrintWriter(requestsocket.getOutputStream(),true);
 			
-			out.println("ADDANSWER|"+a);
+			out.println("ADDANSWER|"+q+"|"+a);
 			
 			requestsocket.close();
 			
@@ -112,13 +97,12 @@ public class DatabaseAPI{
 
 	}
 	
-	public static String[] fetchAnswer(String question){
+	public List<String> fetchAnswer(String question){
 		Socket requestsocket;
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
-		String[] strarray = null;
 		try{
 			requestsocket = new Socket("128.10.25.10",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
@@ -133,15 +117,11 @@ public class DatabaseAPI{
 		
 		if(answer!=null){
 			ans = Arrays.asList(answer.split("\\|"));
-			strarray = ans.toArray(new String[0]);
-			for(int i=0;i<strarray.length;i++){
-				System.out.println(strarray[i]);
-			}
 		}
-		return strarray;
+		return ans;
 	}
 	
-	public static void addQuestion(String question){
+	public void addQuestion(String question){
 		Socket requestsocket;
 		PrintWriter out;
 		try{

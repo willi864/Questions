@@ -22,9 +22,7 @@ import android.os.Build;
 
 public class DisplaySelectQuestion extends ListActivity {
 
-	private QuestionDataSource datasource;
-	private AnswerDataSource ansdatasource;
-	
+	private DatabaseAPI databaseapi;
 	private String message;
 	
 	@Override
@@ -32,23 +30,15 @@ public class DisplaySelectQuestion extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_select_question);
 
-		datasource = new QuestionDataSource(this);
-		datasource.open();
-		ansdatasource = new AnswerDataSource(this);
-		ansdatasource.open();
-		
 		Intent intent = getIntent();
 		message = intent.getStringExtra(DisplayLookActivity.EXTRA_MESSAGE);
 		
 		TextView tv = (TextView) findViewById(R.id.question);
 		tv.setText(message);
 		
-		
-		message = message.substring(message.indexOf(" ")+1);
-		long quesid = datasource.getQuestionId(message);
-		List<Answers> values = ansdatasource.getAllAnswers(quesid);
+		List<String> values = databaseapi.fetchAnswer(message);
 		if(values!=null){
-			ArrayAdapter<Answers> adapter = new ArrayAdapter<Answers>(this,android.R.layout.simple_dropdown_item_1line,values);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
 			setListAdapter(adapter);
 		}		
 	}
@@ -108,15 +98,14 @@ public class DisplaySelectQuestion extends ListActivity {
 			
 			return;
 		}
-		long quesId=datasource.getQuestionId(message);
-		ansdatasource.createAnswer(answer, quesId);
+		databaseapi.addAnswer(message, answer);
+		List<String> answers= databaseapi.fetchAnswer(message);
 		
-		List<Answers> answers= ansdatasource.getAllAnswers(quesId);
 		
 		@SuppressWarnings("unchecked")
-		ArrayAdapter<Answers> adapter = (ArrayAdapter<Answers>) getListAdapter();
+		ArrayAdapter<String> adapter = (ArrayAdapter<String>) getListAdapter();
 		if(adapter==null){
-			adapter = new ArrayAdapter<Answers>(this,android.R.layout.simple_dropdown_item_1line,answers);
+			adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,answers);
 			setListAdapter(adapter);
 		}else{
 			adapter.clear();
@@ -124,19 +113,4 @@ public class DisplaySelectQuestion extends ListActivity {
 		    adapter.notifyDataSetChanged();
 		}
 	}
-
-	
-	 @Override
-	  protected void onResume() {
-		ansdatasource.open();
-	    datasource.open();
-	    super.onResume();
-	  }
-
-	  @Override
-	  protected void onPause() {
-	    datasource.close();
-	    ansdatasource.close();
-	    super.onPause();
-	  }
 }

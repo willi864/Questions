@@ -18,9 +18,7 @@ import android.os.Build;
 
 public class DisplayAnswerActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
-	private QuestionDataSource datasource;
-	private AnswerDataSource ansdatasource;
-	
+	private DatabaseAPI databaseapi;
 	private String message;
 	
 	@Override
@@ -28,13 +26,7 @@ public class DisplayAnswerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_answer);
 		
-		datasource = new QuestionDataSource(this);
-		datasource.open();
-		ansdatasource = new AnswerDataSource(this);
-		ansdatasource.open();
-		
-		message=datasource.getFirstQuestions();
-		
+		message=databaseapi.randomQuestion();
 		TextView tv = (TextView) findViewById(R.id.text_question);
 		tv.setText(message);
 		tv.setTextSize(20);
@@ -93,50 +85,18 @@ public class DisplayAnswerActivity extends Activity {
 			dialog.show();
 			return;
 		}
-		long quesId=datasource.getQuestionId(message);
-		ansdatasource.createAnswer(answer, quesId);
-		
+		databaseapi.fetchAnswer(message);
 		Intent intent =  new Intent(this, DisplaySelectQuestion.class);
 		intent.putExtra(EXTRA_MESSAGE, message);		
 		
 		startActivity(intent);
 	}
 	
-	public void toNextQuestion(View view){
-		long quesId=datasource.getQuestionId(message);
-		quesId++;
-		message = datasource.getQuestion(quesId);
-		if(message==null)
-			message=datasource.getFirstQuestions();
-		
+	public void toRandomQuestion(View view){
+		message=databaseapi.randomQuestion();
 		TextView tv = (TextView) findViewById(R.id.text_question);
 		tv.setText(message);
 		tv.setTextSize(20);
 	}
-	
-	public void toPrevQuestion(View view){
-		long quesId=datasource.getQuestionId(message);
-		quesId--;
-		message = datasource.getQuestion(quesId);
-		if(message==null)
-			message=datasource.getLastQuestions();
-		
-		TextView tv = (TextView) findViewById(R.id.text_question);
-		tv.setText(message);
-		tv.setTextSize(20);
-	}
-	
-	 @Override
-	  protected void onResume() {
-		ansdatasource.open();
-	    datasource.open();
-	    super.onResume();
-	  }
 
-	  @Override
-	  protected void onPause() {
-		ansdatasource.close();
-	    datasource.close();
-	    super.onPause();
-	  }
 }
