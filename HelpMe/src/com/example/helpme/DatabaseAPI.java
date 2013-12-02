@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DatabaseAPI{
-	
+	//IP address is for sslab01
 	public List<String> getLastTen(){
 		Socket requestsocket;
 		PrintWriter out;
