@@ -9,17 +9,17 @@ import java.util.List;
 
 public class DatabaseAPI{
 	//IP address is for sslab01
-	public List<String> getLastTen(){
+	public static List<String> getLastTen(){
 		Socket requestsocket;
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
 		try{
-			requestsocket = new Socket("128.10.25.10",7755);
+			requestsocket = new Socket("128.10.25.101",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
 			out = new PrintWriter(requestsocket.getOutputStream(),true);
-			
+
 			out.println("GETLASTTEN|");
 			answer = in.readLine();
 			
@@ -33,14 +33,14 @@ public class DatabaseAPI{
 		return ans;
 	}
 	
-	public List<String> findQuestion(String key){
+	public static List<String> findQuestion(String key){
 		Socket requestsocket;
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
 		try{
-			requestsocket = new Socket("128.10.25.10",7755);
+			requestsocket = new Socket("128.10.25.101",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
 			out = new PrintWriter(requestsocket.getOutputStream(),true);
 			
@@ -57,14 +57,14 @@ public class DatabaseAPI{
 		return ans;
 	}
 	
-	public String randomQuestion(){
+	public static String randomQuestion(){
 		Socket requestsocket;
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
 		try{
-			requestsocket = new Socket("128.10.25.10",7755);
+			requestsocket = new Socket("128.10.25.101",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
 			out = new PrintWriter(requestsocket.getOutputStream(),true);
 			
@@ -82,11 +82,11 @@ public class DatabaseAPI{
 	}
 	
 	
-	public void addAnswer(String q, String a){
+	public static void addAnswer(String q, String a){
 		Socket requestsocket;
 		PrintWriter out;
 		try{
-			requestsocket = new Socket("128.10.25.10",7755);
+			requestsocket = new Socket("128.10.25.101",7755);
 			out = new PrintWriter(requestsocket.getOutputStream(),true);
 			
 			out.println("ADDANSWER|"+q+"|"+a);
@@ -97,14 +97,14 @@ public class DatabaseAPI{
 
 	}
 	
-	public List<String> fetchAnswer(String question){
-		Socket requestsocket;
+	public static List<String> fetchAnswer(String question){
+		Socket requestsocket;		
 		PrintWriter out;
 		BufferedReader in;
 		String answer=null;
 		List<String> ans=null;
 		try{
-			requestsocket = new Socket("128.10.25.10",7755);
+			requestsocket = new Socket("128.10.25.101",7755);
 			in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
 			out = new PrintWriter(requestsocket.getOutputStream(),true);
 			
@@ -121,11 +121,12 @@ public class DatabaseAPI{
 		return ans;
 	}
 	
-	public void addQuestion(String question){
+	public static void addQuestion(String question){
 		Socket requestsocket;
 		PrintWriter out;
 		try{
-			requestsocket = new Socket("128.10.25.10",7755);
+			requestsocket = new Socket("128.10.25.101",7755);
+			
 			out = new PrintWriter(requestsocket.getOutputStream(),true);
 			
 			out.println("ADDQUESTION|"+question);
