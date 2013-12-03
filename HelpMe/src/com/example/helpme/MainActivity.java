@@ -1,9 +1,5 @@
 package com.example.helpme;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

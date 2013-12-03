@@ -17,14 +17,12 @@ import android.os.Build;
 
 public class DisplayPostActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.helpme.post.Question";
-	private DatabaseAPI databaseapi;
 	
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_post);
-		
 		TextView tv = (TextView) findViewById(R.id.text_post);
 		tv.setText("Post question:");
 		tv.setTextSize(30);
@@ -83,10 +81,12 @@ public class DisplayPostActivity extends Activity {
 			dialog.show();
 			return;
 		}
+		
+		DatabaseAPI.addQuestion(question);
+		
 		TextView tv = (TextView) findViewById(R.id.text_post);
 		tv.setText("You posted the question:\n"+question);
 		tv.setTextSize(30);
-		databaseapi.addQuestion(question);
 	}
 
 }

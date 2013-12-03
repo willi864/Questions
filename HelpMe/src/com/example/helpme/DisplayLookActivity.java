@@ -22,16 +22,13 @@ import android.widget.ListView;
 public class DisplayLookActivity extends ListActivity {
 
 	static final String EXTRA_MESSAGE = "com.example.helpme.Question";
-	private DatabaseAPI databaseapi;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_look);
+
 		
-//		datasource = new QuestionDataSource(this);
-//		datasource.open();
-		
-		List<String> values = databaseapi.getLastTen();
+		List<String> values = DatabaseAPI.getLastTen();
 		if(values!=null){
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
 			setListAdapter(adapter);
@@ -104,7 +101,7 @@ public class DisplayLookActivity extends ListActivity {
 			
 	    	return;
 	    }
-		List<String> values = databaseapi.findQuestion(questionKey);	
+		List<String> values = DatabaseAPI.findQuestion(questionKey);	
 		@SuppressWarnings("unchecked")
 		ArrayAdapter<String> adapter = (ArrayAdapter<String>) getListAdapter();
 		if(adapter==null){

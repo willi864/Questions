@@ -18,15 +18,13 @@ import android.os.Build;
 
 public class DisplayAnswerActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
-	private DatabaseAPI databaseapi;
 	private String message;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_answer);
-		
-		message=databaseapi.randomQuestion();
+		message=DatabaseAPI.randomQuestion();
 		TextView tv = (TextView) findViewById(R.id.text_question);
 		tv.setText(message);
 		tv.setTextSize(20);
@@ -85,7 +83,7 @@ public class DisplayAnswerActivity extends Activity {
 			dialog.show();
 			return;
 		}
-		databaseapi.fetchAnswer(message);
+		DatabaseAPI.fetchAnswer(message);
 		Intent intent =  new Intent(this, DisplaySelectQuestion.class);
 		intent.putExtra(EXTRA_MESSAGE, message);		
 		
@@ -93,7 +91,7 @@ public class DisplayAnswerActivity extends Activity {
 	}
 	
 	public void toRandomQuestion(View view){
-		message=databaseapi.randomQuestion();
+		message=DatabaseAPI.randomQuestion();
 		TextView tv = (TextView) findViewById(R.id.text_question);
 		tv.setText(message);
 		tv.setTextSize(20);

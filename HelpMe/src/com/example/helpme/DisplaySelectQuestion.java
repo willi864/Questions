@@ -22,21 +22,19 @@ import android.os.Build;
 
 public class DisplaySelectQuestion extends ListActivity {
 
-	private DatabaseAPI databaseapi;
 	private String message;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_select_question);
-
 		Intent intent = getIntent();
 		message = intent.getStringExtra(DisplayLookActivity.EXTRA_MESSAGE);
 		
 		TextView tv = (TextView) findViewById(R.id.question);
 		tv.setText(message);
 		
-		List<String> values = databaseapi.fetchAnswer(message);
+		List<String> values = DatabaseAPI.fetchAnswer(message);
 		if(values!=null){
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
 			setListAdapter(adapter);
@@ -98,8 +96,8 @@ public class DisplaySelectQuestion extends ListActivity {
 			
 			return;
 		}
-		databaseapi.addAnswer(message, answer);
-		List<String> answers= databaseapi.fetchAnswer(message);
+		DatabaseAPI.addAnswer(message, answer);
+		List<String> answers= DatabaseAPI.fetchAnswer(message);
 		
 		
 		@SuppressWarnings("unchecked")
