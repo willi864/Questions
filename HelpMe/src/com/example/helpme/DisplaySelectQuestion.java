@@ -11,12 +11,13 @@ import java.util.List;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,17 +27,22 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 
-public class DisplayAnswerActivity extends Activity {
-	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
+public class DisplaySelectQuestion extends ListActivity {
 	
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_answer);
+		setContentView(R.layout.activity_display_select_question);
 		
-		new RandomOperation().execute();
-
+		Intent intent = getIntent();
+		String message = intent.getStringExtra(DisplayLookActivity.EXTRA_MESSAGE);
+		
+		TextView tv = (TextView) findViewById(R.id.question);
+		tv.setText(message);
+		
+		String[] params = {message};
+		new FetchAnswerOperation().execute(params);		
 	}
 
 	/**
@@ -52,7 +58,7 @@ public class DisplayAnswerActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.display_answer, menu);
+		getMenuInflater().inflate(R.menu.display_select_question, menu);
 		return true;
 	}
 
@@ -72,12 +78,13 @@ public class DisplayAnswerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 	
-	public void addAnswer(View view){
-		EditText editText = (EditText) findViewById(R.id.edit_answer);
+	@SuppressLint("NewApi")
+	public void answerQuestion(View view){
+		
+        EditText editText = (EditText) findViewById(R.id.edit_textanswer);
 		String answer = editText.getText().toString();
-		if(answer.equals("")){
+		if(answer.equals("")||answer.equals(" ")||answer.equals("\n")||answer.equals("\t")){
 			final Dialog dialog = new Dialog(this);
 			dialog.setContentView(R.layout.dialog);
 			dialog.setTitle("Input Error");
@@ -90,20 +97,18 @@ public class DisplayAnswerActivity extends Activity {
 				}
 			});
 			dialog.show();
+			
 			return;
 		}
 		
-		TextView tv = (TextView)findViewById(R.id.text_question);
+		TextView tv = (TextView)findViewById(R.id.question);
 		String message = tv.getText().toString();
-		String[] params={message, answer};
 		
+		String[] params = {message, answer};
 		new AddAnswerOperation().execute(params);
-
-	}
-	
-	public void toRandomQuestion(View view){
-		new RandomOperation().execute();
-
+		
+		String[] mes = {message};
+		new FetchAnswer2Operation().execute(mes);
 	}
 	
 	private class AddAnswerOperation extends AsyncTask<String, Void, Void>{
@@ -122,50 +127,76 @@ public class DisplayAnswerActivity extends Activity {
 			}catch(Exception err){	}
 			return null;
 		}
-		 
-		protected void onPostExecute(Void param) {
-			TextView tv = (TextView)findViewById(R.id.text_question);
-			String message = tv.getText().toString();
-			
-			Intent intent =  new Intent(DisplayAnswerActivity.this, DisplaySelectQuestion.class);
-			intent.putExtra(DisplayAnswerActivity.EXTRA_MESSAGE, message);		
-			startActivity(intent);
-		}
-		 
 	}
 	
-	private class RandomOperation extends AsyncTask<Void, Void, String>{
-		Socket requestsocket;
+	private class FetchAnswerOperation extends AsyncTask<String, Void, List<String>>{
+		Socket requestsocket;		
 		PrintWriter out;
 		BufferedReader in;
-		String question=null;
-		List<String> ques=null;
+		String answer=null;
+		List<String> ans=null;
 		
-		protected String doInBackground(Void... params){
+		protected List<String> doInBackground(String... param){
 			try{
 				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
 				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
 				out = new PrintWriter(requestsocket.getOutputStream(),true);
 				
-				out.println("RANDOMQUESTION|");
-				question = in.readLine();
+				out.println("FETCHANSWERS|"+param[0]);
+				answer = in.readLine();
 				
 				requestsocket.close();
 				
 			}catch(Exception err){	}
 			
-			if(question!=null){
-				ques = Arrays.asList(question.split("\\|"));
+			if(answer!=null){
+				ans = Arrays.asList(answer.split("\\|"));
 			}
-			return ques.get(0);
+			return ans;
 		}
 		 
-		protected void onPostExecute(String message) {
-			TextView tv = (TextView) findViewById(R.id.text_question);
-			tv.setText(message);
-			tv.setTextSize(20);
+		protected void onPostExecute(List<String> list) {
+			List<String> values = list;
+			if(values!=null){
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(DisplaySelectQuestion.this,android.R.layout.simple_dropdown_item_1line,values);
+				setListAdapter(adapter);
+			}		
 		}
 		 
 	}
-
+	
+	private class FetchAnswer2Operation extends AsyncTask<String, Void, List<String>>{
+		Socket requestsocket;		
+		PrintWriter out;
+		BufferedReader in;
+		String answer=null;
+		List<String> ans=null;
+		
+		protected List<String> doInBackground(String... param){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("FETCHANSWERS|"+param[0]);
+				answer = in.readLine();
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			
+			if(answer!=null){
+				ans = Arrays.asList(answer.split("\\|"));
+			}
+			return ans;
+		}
+		 
+		@SuppressLint("NewApi")
+		protected void onPostExecute(List<String> list) {
+			List<String> answers = list;
+			setListAdapter(new ArrayAdapter<String>(DisplaySelectQuestion.this,android.R.layout.simple_dropdown_item_1line,answers));
+		}
+		 
+	}
+	
 }

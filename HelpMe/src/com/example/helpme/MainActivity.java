@@ -7,13 +7,14 @@ import android.view.Menu;
 import android.view.View;
 
 public class MainActivity extends Activity {
-
 	@Override
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	}
-
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -30,10 +31,10 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 	
-	/*
+	
 	public void newQuestion(View view) {
-        Intent intent = new Intent(this, DisplayNewActivity.class);
+        Intent intent = new Intent(this, DisplayPostActivity.class);
         startActivity(intent);
-    }*/
+    }
 
 }

@@ -1,13 +1,9 @@
 package com.example.helpme;
 
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
+
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,20 +19,22 @@ import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.Build;
 
-public class DisplayAnswerActivity extends Activity {
-	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
+public class DisplayPostActivity extends Activity {
+	public final static String EXTRA_MESSAGE = "com.example.helpme.post.Question";
 	
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_answer);
+		setContentView(R.layout.activity_display_post);
+        
+		TextView tv = (TextView) findViewById(R.id.text_post);
+		tv.setText("Post question:");
+		tv.setTextSize(30);
 		
-		new RandomOperation().execute();
-
+		
 	}
 
 	/**
@@ -52,7 +50,7 @@ public class DisplayAnswerActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.display_answer, menu);
+		getMenuInflater().inflate(R.menu.display_post, menu);
 		return true;
 	}
 
@@ -72,12 +70,12 @@ public class DisplayAnswerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 	
-	public void addAnswer(View view){
-		EditText editText = (EditText) findViewById(R.id.edit_answer);
-		String answer = editText.getText().toString();
-		if(answer.equals("")){
+	public void postQuestion(View view){		
+		
+		EditText editText = (EditText) findViewById(R.id.edit_message);
+		String question = editText.getText().toString();
+		if(question.equals("")||question.equals(" ")||question.equals("\t")||question.equals("\n")){
 			final Dialog dialog = new Dialog(this);
 			dialog.setContentView(R.layout.dialog);
 			dialog.setTitle("Input Error");
@@ -92,80 +90,38 @@ public class DisplayAnswerActivity extends Activity {
 			dialog.show();
 			return;
 		}
-		
-		TextView tv = (TextView)findViewById(R.id.text_question);
-		String message = tv.getText().toString();
-		String[] params={message, answer};
-		
-		new AddAnswerOperation().execute(params);
-
+	    
+		String[] ques={question};
+		new Operation().execute(ques);
 	}
-	
-	public void toRandomQuestion(View view){
-		new RandomOperation().execute();
 
-	}
 	
-	private class AddAnswerOperation extends AsyncTask<String, Void, Void>{
+	private class Operation extends AsyncTask<String, Void, String>{
 		Socket requestsocket;
 		PrintWriter out;
-		
-		protected Void doInBackground(String... param){
+		protected String doInBackground(String... question){
 			try{
 				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				
 				out = new PrintWriter(requestsocket.getOutputStream(),true);
 				
-				out.println("ADDANSWER|"+param[0]+"|"+param[1]);
+				out.println("ADDQUESTION|"+question[0]);
 				
 				requestsocket.close();
 				
-			}catch(Exception err){	}
-			return null;
-		}
-		 
-		protected void onPostExecute(Void param) {
-			TextView tv = (TextView)findViewById(R.id.text_question);
-			String message = tv.getText().toString();
+			}catch(Exception err){ return err.getMessage();	}
 			
-			Intent intent =  new Intent(DisplayAnswerActivity.this, DisplaySelectQuestion.class);
-			intent.putExtra(DisplayAnswerActivity.EXTRA_MESSAGE, message);		
-			startActivity(intent);
+			return question[0];
 		}
-		 
-	}
-	
-	private class RandomOperation extends AsyncTask<Void, Void, String>{
-		Socket requestsocket;
-		PrintWriter out;
-		BufferedReader in;
-		String question=null;
-		List<String> ques=null;
 		
-		protected String doInBackground(Void... params){
-			try{
-				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
-				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
-				out = new PrintWriter(requestsocket.getOutputStream(),true);
-				
-				out.println("RANDOMQUESTION|");
-				question = in.readLine();
-				
-				requestsocket.close();
-				
-			}catch(Exception err){	}
-			
-			if(question!=null){
-				ques = Arrays.asList(question.split("\\|"));
-			}
-			return ques.get(0);
+
+		 
+		protected void onPostExecute(String question) {
+			TextView tv = (TextView) findViewById(R.id.text_post);
+			tv.setText("You posted the question:\n"+question);
+			tv.setTextSize(30);
 		}
 		 
-		protected void onPostExecute(String message) {
-			TextView tv = (TextView) findViewById(R.id.text_question);
-			tv.setText(message);
-			tv.setTextSize(20);
-		}
 		 
 	}
-
 }

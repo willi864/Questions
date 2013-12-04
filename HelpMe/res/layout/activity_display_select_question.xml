@@ -6,38 +6,39 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".DisplayAnswerActivity" >
+    tools:context=".DisplaySelectQuestion" >
 
-    <TextView android:id="@+id/text_question"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-        
-     <Button android:id="@+id/button_random"
+    <TextView android:id="@+id/question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-       	android:layout_below="@+id/text_question"
-        android:text="@string/button_random" 
-        android:onClick="toRandomQuestion"
-        android:background="@color/blue"
-        android:textColor="@color/white"/>
+        android:text="@string/hello_world" />
     
-    <EditText android:id="@+id/edit_answer"
-        android:layout_weight="1"
-        android:layout_width="0dp"
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       	android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/edit_textanswer"
+        android:text="Answers"/>
+
+
+	<EditText android:id="@+id/edit_textanswer"
+        android:layout_weight="1"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/question"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/button_ans" />
     
-    <Button android:id="@+id/button_ans"
+    <Button  android:id="@+id/answer"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_answer" 
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/question"
         android:layout_alignParentRight="true"
-        android:onClick="addAnswer"
+        android:onClick="answerQuestion"
         android:background="@color/blue"
-        android:textColor="@color/white"/>
-
+        android:textColor="@color/white" />
+        
 </RelativeLayout>

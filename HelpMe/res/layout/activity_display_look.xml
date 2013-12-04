@@ -8,126 +8,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".DisplayLookActivity" >
 
-    <TextView
-        android:id="@+id/TextView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="2nd Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView01"
-        android:layout_below="@+id/TextView01"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="3rd Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_below="@+id/textView2"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="4th Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView3"
-        android:layout_below="@+id/textView3"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="5th Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/TextView02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView4"
-        android:layout_below="@+id/textView4"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="6th Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/TextView03"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView02"
-        android:layout_below="@+id/TextView02"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="7th Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/TextView04"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView03"
-        android:layout_below="@+id/TextView03"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="8th Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/TextView05"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView04"
-        android:layout_below="@+id/TextView04"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="9th Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/TextView06"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView05"
-        android:layout_below="@+id/TextView05"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="10th Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/textView1"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/editText1"
-        android:layout_marginLeft="14dp"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:onClick="showQuestion"
-        android:text="Most Recent Question"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="Most Recent Question"/>
 
     <Button
         android:id="@+id/button1"
@@ -137,7 +24,9 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/button_search"
-        android:onClick="showSearchQuestion" />
+        android:onClick="showSearchQuestion" 
+        android:background="@color/blue"
+        android:textColor="@color/white"/>
 
     <EditText
         android:id="@+id/editText1"
