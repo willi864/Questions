@@ -21,6 +21,8 @@
         android:text="@string/button_post" 
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:onClick="postQuestion"/>
+        android:onClick="postQuestion"
+        android:background="@color/blue"
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

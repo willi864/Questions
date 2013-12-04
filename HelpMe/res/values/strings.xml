@@ -21,5 +21,8 @@
     <string name="title_activity_display_question">Here is your question</string>
     <string name="title_activity_display_question_activiy">Here is your quesiton</string>
     <string name="title_activity_display_select_question">Selected Question</string>
+    <color name="blue">#13007D</color>
+    <color name="white">#FFFFFF</color>
+    <color name="grey">#2E2E2E</color>
 
 </resources>

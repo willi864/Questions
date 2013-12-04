@@ -24,7 +24,9 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/button_search"
-        android:onClick="showSearchQuestion" />
+        android:onClick="showSearchQuestion" 
+        android:background="@color/blue"
+        android:textColor="@color/white"/>
 
     <EditText
         android:id="@+id/editText1"

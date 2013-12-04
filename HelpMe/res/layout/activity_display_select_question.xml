@@ -37,6 +37,8 @@
         android:text="@string/button_answer" 
         android:layout_below="@+id/question"
         android:layout_alignParentRight="true"
-        android:onClick="answerQuestion" />
+        android:onClick="answerQuestion"
+        android:background="@color/blue"
+        android:textColor="@color/white" />
         
 </RelativeLayout>
