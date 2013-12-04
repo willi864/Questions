@@ -1,5 +1,11 @@
 package com.example.helpme;
 
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Dialog;
@@ -23,9 +29,12 @@ public class DisplayPostActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_post);
+        
 		TextView tv = (TextView) findViewById(R.id.text_post);
 		tv.setText("Post question:");
 		tv.setTextSize(30);
+		
+		
 	}
 
 	/**
@@ -81,12 +90,38 @@ public class DisplayPostActivity extends Activity {
 			dialog.show();
 			return;
 		}
-		
-		DatabaseAPI.addQuestion(question);
-		
-		TextView tv = (TextView) findViewById(R.id.text_post);
-		tv.setText("You posted the question:\n"+question);
-		tv.setTextSize(30);
+	    
+		String[] ques={question};
+		new Operation().execute(ques);
 	}
 
+	
+	private class Operation extends AsyncTask<String, Void, String>{
+		Socket requestsocket;
+		PrintWriter out;
+		protected String doInBackground(String... question){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("ADDQUESTION|"+question[0]);
+				
+				requestsocket.close();
+				
+			}catch(Exception err){ return err.getMessage();	}
+			
+			return question[0];
+		}
+		
+
+		 
+		protected void onPostExecute(String question) {
+			TextView tv = (TextView) findViewById(R.id.text_post);
+			tv.setText("You posted the question:\n"+question);
+			tv.setTextSize(30);
+		}
+		 
+		 
+	}
 }

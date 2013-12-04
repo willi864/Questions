@@ -1,8 +1,15 @@
 package com.example.helpme;
 
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -21,24 +28,21 @@ import android.content.Intent;
 import android.os.Build;
 
 public class DisplaySelectQuestion extends ListActivity {
-
-	private String message;
 	
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_select_question);
+		
 		Intent intent = getIntent();
-		message = intent.getStringExtra(DisplayLookActivity.EXTRA_MESSAGE);
+		String message = intent.getStringExtra(DisplayLookActivity.EXTRA_MESSAGE);
 		
 		TextView tv = (TextView) findViewById(R.id.question);
 		tv.setText(message);
 		
-		List<String> values = DatabaseAPI.fetchAnswer(message);
-		if(values!=null){
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
-			setListAdapter(adapter);
-		}		
+		String[] params = {message};
+		new FetchAnswerOperation().execute(params);		
 	}
 
 	/**
@@ -96,19 +100,103 @@ public class DisplaySelectQuestion extends ListActivity {
 			
 			return;
 		}
-		DatabaseAPI.addAnswer(message, answer);
-		List<String> answers= DatabaseAPI.fetchAnswer(message);
 		
+		TextView tv = (TextView)findViewById(R.id.question);
+		String message = tv.getText().toString();
 		
-		@SuppressWarnings("unchecked")
-		ArrayAdapter<String> adapter = (ArrayAdapter<String>) getListAdapter();
-		if(adapter==null){
-			adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,answers);
-			setListAdapter(adapter);
-		}else{
-			adapter.clear();
-			adapter.addAll(answers);
-		    adapter.notifyDataSetChanged();
+		String[] params = {message, answer};
+		new AddAnswerOperation().execute(params);
+		
+		String[] mes = {message};
+		new FetchAnswer2Operation().execute(mes);
+	}
+	
+	private class AddAnswerOperation extends AsyncTask<String, Void, Void>{
+		Socket requestsocket;
+		PrintWriter out;
+		
+		protected Void doInBackground(String... param){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("ADDANSWER|"+param[0]+"|"+param[1]);
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			return null;
 		}
 	}
+	
+	private class FetchAnswerOperation extends AsyncTask<String, Void, List<String>>{
+		Socket requestsocket;		
+		PrintWriter out;
+		BufferedReader in;
+		String answer=null;
+		List<String> ans=null;
+		
+		protected List<String> doInBackground(String... param){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("FETCHANSWERS|"+param[0]);
+				answer = in.readLine();
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			
+			if(answer!=null){
+				ans = Arrays.asList(answer.split("\\|"));
+			}
+			return ans;
+		}
+		 
+		protected void onPostExecute(List<String> list) {
+			List<String> values = list;
+			if(values!=null){
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(DisplaySelectQuestion.this,android.R.layout.simple_dropdown_item_1line,values);
+				setListAdapter(adapter);
+			}		
+		}
+		 
+	}
+	
+	private class FetchAnswer2Operation extends AsyncTask<String, Void, List<String>>{
+		Socket requestsocket;		
+		PrintWriter out;
+		BufferedReader in;
+		String answer=null;
+		List<String> ans=null;
+		
+		protected List<String> doInBackground(String... param){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("FETCHANSWERS|"+param[0]);
+				answer = in.readLine();
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			
+			if(answer!=null){
+				ans = Arrays.asList(answer.split("\\|"));
+			}
+			return ans;
+		}
+		 
+		@SuppressLint("NewApi")
+		protected void onPostExecute(List<String> list) {
+			List<String> answers = list;
+			setListAdapter(new ArrayAdapter<String>(DisplaySelectQuestion.this,android.R.layout.simple_dropdown_item_1line,answers));
+		}
+		 
+	}
+	
 }

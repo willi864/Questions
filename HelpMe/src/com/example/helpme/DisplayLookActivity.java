@@ -1,5 +1,11 @@
 package com.example.helpme;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -7,6 +13,7 @@ import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -22,17 +29,14 @@ import android.widget.ListView;
 public class DisplayLookActivity extends ListActivity {
 
 	static final String EXTRA_MESSAGE = "com.example.helpme.Question";
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_look);
-
 		
-		List<String> values = DatabaseAPI.getLastTen();
-		if(values!=null){
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
-			setListAdapter(adapter);
-		}
+		new LastTenOperation().execute();
+		
 	}
 
 	/**
@@ -101,21 +105,83 @@ public class DisplayLookActivity extends ListActivity {
 			
 	    	return;
 	    }
-		List<String> values = DatabaseAPI.findQuestion(questionKey);	
-		@SuppressWarnings("unchecked")
-		ArrayAdapter<String> adapter = (ArrayAdapter<String>) getListAdapter();
-		if(adapter==null){
-			adapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,values);
-			setListAdapter(adapter);
-		}else if(values==null){
-			adapter.clear();
-		    adapter.notifyDataSetChanged();
-		}else{
-			adapter.clear();
-			adapter.addAll(values);
-		    adapter.notifyDataSetChanged();
-		}
+	    
+	    String[] params={questionKey};
+	    
+	    new FindQuestionOperation().execute(params);
+		
     }
 	
+	private class FindQuestionOperation extends AsyncTask<String, Void, List<String>>{
+		Socket requestsocket;
+		PrintWriter out;
+		BufferedReader in;
+		String question=null;
+		List<String> ques=null;
+		
+		protected List<String> doInBackground(String... params){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("FINDQUESTION|"+params[0]);
+				question = in.readLine();
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			
+			if(question!=null){
+				ques = Arrays.asList(question.split("\\|"));
+			}
+			return ques;
+		}
+		 
+		@SuppressLint("NewApi")
+		protected void onPostExecute(List<String> list) {
+			List<String> values = list;
+			setListAdapter(new ArrayAdapter<String>(DisplayLookActivity.this,android.R.layout.simple_dropdown_item_1line,values));
+			
+		}
+		 
+	}
+	
+	
+	private class LastTenOperation extends AsyncTask<Void, Void, List<String>>{
+		Socket requestsocket;
+		PrintWriter out;
+		BufferedReader in;
+		String question=null;
+		List<String> ques=null;
+		
+		protected List<String> doInBackground(Void... params){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+
+				out.println("GETLASTTEN|");
+				question = in.readLine();
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			
+			if(question!=null){
+				ques = Arrays.asList(question.split("\\|"));
+			}
+			return ques;
+		}
+		 
+		protected void onPostExecute(List<String> list) {
+			List<String> values = list;
+			if(values!=null){
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(DisplayLookActivity.this,android.R.layout.simple_dropdown_item_1line,values);
+				setListAdapter(adapter);
+			}
+		}
+		 
+	}
 	
 }

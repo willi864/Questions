@@ -1,6 +1,15 @@
 package com.example.helpme;
 
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Dialog;
@@ -12,22 +21,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 
 public class DisplayAnswerActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.helpme.Question";
-	private String message;
 	
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_answer);
-		message=DatabaseAPI.randomQuestion();
-		TextView tv = (TextView) findViewById(R.id.text_question);
-		tv.setText(message);
-		tv.setTextSize(20);
+		
+		new RandomOperation().execute();
+
 	}
 
 	/**
@@ -83,18 +92,80 @@ public class DisplayAnswerActivity extends Activity {
 			dialog.show();
 			return;
 		}
-		DatabaseAPI.fetchAnswer(message);
-		Intent intent =  new Intent(this, DisplaySelectQuestion.class);
-		intent.putExtra(EXTRA_MESSAGE, message);		
 		
-		startActivity(intent);
+		TextView tv = (TextView)findViewById(R.id.text_question);
+		String message = tv.getText().toString();
+		String[] params={message, answer};
+		
+		new AddAnswerOperation().execute(params);
+
 	}
 	
 	public void toRandomQuestion(View view){
-		message=DatabaseAPI.randomQuestion();
-		TextView tv = (TextView) findViewById(R.id.text_question);
-		tv.setText(message);
-		tv.setTextSize(20);
+		new RandomOperation().execute();
+
+	}
+	
+	private class AddAnswerOperation extends AsyncTask<String, Void, Void>{
+		Socket requestsocket;
+		PrintWriter out;
+		
+		protected Void doInBackground(String... param){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("ADDANSWER|"+param[0]+"|"+param[1]);
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			return null;
+		}
+		 
+		protected void onPostExecute(Void param) {
+			TextView tv = (TextView)findViewById(R.id.text_question);
+			String message = tv.getText().toString();
+			
+			Intent intent =  new Intent(DisplayAnswerActivity.this, DisplaySelectQuestion.class);
+			intent.putExtra(DisplayAnswerActivity.EXTRA_MESSAGE, message);		
+			startActivity(intent);
+		}
+		 
+	}
+	
+	private class RandomOperation extends AsyncTask<Void, Void, String>{
+		Socket requestsocket;
+		PrintWriter out;
+		BufferedReader in;
+		String question=null;
+		List<String> ques=null;
+		
+		protected String doInBackground(Void... params){
+			try{
+				requestsocket = new Socket(InetAddress.getByName("10.0.2.2"),7777);
+				in = new BufferedReader(new InputStreamReader(requestsocket.getInputStream()));
+				out = new PrintWriter(requestsocket.getOutputStream(),true);
+				
+				out.println("RANDOMQUESTION|");
+				question = in.readLine();
+				
+				requestsocket.close();
+				
+			}catch(Exception err){	}
+			
+			if(question!=null){
+				ques = Arrays.asList(question.split("\\|"));
+			}
+			return ques.get(0);
+		}
+		 
+		protected void onPostExecute(String message) {
+			TextView tv = (TextView) findViewById(R.id.text_question);
+			tv.setText(message);
+			tv.setTextSize(20);
+		}
+		 
 	}
 
 }
